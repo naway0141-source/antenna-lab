@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>アンテナ実験室 ― 工作室 | てまごりゲーム集</title>
+<style>
+  :root{ --bg:#0f141b; --panel:#182130; --panel2:#1f2a3d; --line:#2c3a52; --txt:#e8edf4; --sub:#9fb0c7; --acc:#ffb454; --copper:#d98a4a; --good:#57d977; --warn:#ff7a7a; }
+  *{ box-sizing:border-box; }
+  body{ margin:0; background:var(--bg); color:var(--txt); font-family:"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif; }
+  header{ padding:20px 16px 10px; text-align:center; }
+  header h1{ margin:0; font-size:1.9rem; letter-spacing:.05em; }
+  header p{ color:var(--sub); margin:6px 0 0; }
+  nav{ display:flex; gap:10px; justify-content:center; margin:14px 0 4px; flex-wrap:wrap; }
+  nav a{ color:var(--txt); text-decoration:none; background:var(--panel2); border:1px solid var(--line); padding:8px 18px; border-radius:999px; }
+  nav a.here{ background:var(--acc); color:#23180a; font-weight:700; border-color:var(--acc); }
+  main{ max-width:980px; margin:0 auto; padding:10px 14px 40px; }
+  section{ background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:18px; margin:16px 0; }
+  h2{ margin:0 0 6px; font-size:1.25rem; }
+  h2 .tag{ font-size:.72rem; background:var(--acc); color:#23180a; border-radius:6px; padding:2px 8px; vertical-align:middle; margin-left:8px; }
+  .desc{ color:var(--sub); font-size:.92rem; line-height:1.6; margin:4px 0 12px; }
+  .row{ display:flex; gap:14px; flex-wrap:wrap; }
+  .grow{ flex:1 1 300px; }
+  canvas#board{ width:100%; max-width:480px; aspect-ratio:1; background:#0a0e14; border:1px solid var(--line); border-radius:8px; touch-action:none; cursor:crosshair; }
+  .tools{ display:flex; gap:8px; flex-wrap:wrap; margin:10px 0; }
+  button{ background:var(--panel2); color:var(--txt); border:1px solid var(--line); border-radius:8px; padding:8px 14px; font-size:.92rem; cursor:pointer; }
+  button:hover{ border-color:var(--acc); }
+  button.on{ background:var(--acc); color:#23180a; font-weight:700; border-color:var(--acc); }
+  button.primary{ background:var(--acc); color:#23180a; font-weight:700; border-color:var(--acc); font-size:1rem; padding:10px 22px; }
+  label{ font-size:.88rem; color:var(--sub); display:block; margin:10px 0 4px; }
+  input[type=text], input[type=number], select, textarea{ width:100%; background:#0d1320; color:var(--txt); border:1px solid var(--line); border-radius:8px; padding:9px 10px; font-size:.95rem; }
+  textarea{ font-family:ui-monospace,Menlo,monospace; font-size:.78rem; word-break:break-all; }
+  .stat{ font-size:.9rem; color:var(--sub); line-height:1.7; }
+  .stat b{ color:var(--txt); }
+  .warn{ color:var(--warn); font-size:.88rem; min-height:1.2em; }
+  .ok{ color:var(--good); font-size:.88rem; }
+  .preset{ border-style:dashed; }
+  ol.howto{ line-height:1.9; color:var(--sub); }
+  ol.howto b{ color:var(--txt); }
+  code{ background:#0d1320; padding:1px 6px; border-radius:5px; color:var(--acc); }
+  footer{ text-align:center; color:var(--sub); font-size:.82rem; padding:0 14px 30px; line-height:1.7; }
+  footer a{ color:var(--acc); }
+  .paramgrid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>📡 アンテナ実験室</h1>
+  <p>人間が形を考えて、AIが裏で本物のシミュレーションを回す「AI設計ゲーム」</p>
+  <nav>
+    <a href="index.html" class="here">🔧 工作室</a>
+    <a href="zukan.html">📖 図鑑</a>
+    <a href="https://naway0141-source.github.io/">🎮 てまごりゲーム集</a>
+  </nav>
+</header>
+<main>
+
+<section>
+  <h2>遊び方</h2>
+  <ol class="howto">
+    <li><b>形を作る</b> ― 下の工作室で、平面パターンを塗るか、3Dテンプレートの寸法を決める。提出前に<b>自分の予想</b>（共振周波数と最小S11）も宣言するのがこのゲームの作法。</li>
+    <li><b>形状コードを発行</b>して、Muse のチャットに貼って渡す。</li>
+    <li><b>AIが解析</b> ― 平面・立体は openEMS (FDTD)、ワイヤ系は NEC2 (MoM) で実計算。結果カード（数値＋図）が返ってくる。</li>
+    <li><b>図鑑に登録</b> ― 結果カードを取り込むとコレクションが増える。予想と実測の読み比べも採点される。</li>
+  </ol>
+  <p class="desc">数値はすべて実計算値です。取れない項目は「取れない」と書くのが実験室の流儀。平面の既定基板は 80×80 mm・FR-4 (εr 4.4, tanδ 0.02)・1.6 mm厚・裏面全面GND・プローブ給電 (50 Ω) です。</p>
+</section>
+
+<section>
+  <h2>平面パターン工作室 <span class="tag">openEMS</span></h2>
+  <p class="desc">2 mm マスで 80×80 mm の基板に銅箔を塗ります。給電点は必ず銅箔の上に置いてください（中心給電の悲劇は図鑑のお手本で…）。</p>
+  <div class="row">
+    <div>
+      <canvas id="board" width="480" height="480"></canvas>
+      <div class="tools">
+        <button id="toolPaint" class="on">🖌 塗る</button>
+        <button id="toolErase">🧽 消す</button>
+        <button id="toolFeed">📍 給電点</button>
+      </div>
+      <div class="tools">
+        <button id="presetInset" class="preset">お手本① 長方形＋内側給電</button>
+        <button id="presetCenter" class="preset">お手本② 長方形＋中心給電</button>
+        <button id="presetCircle" class="preset">お手本③ 円形＋6mm給電</button>
+      </div>
+      <div class="tools">
+        <button id="btnClear">全消し</button>
+        <button id="btnFill">全面銅箔</button>
+      </div>
+      <p class="stat">銅箔: <b id="statCells">0 セル</b>（<b id="statArea">0 mm²</b>）<br>給電点: <b id="statFeed">未設定</b></p>
+      <p class="warn" id="feedWarn"></p>
+    </div>
+    <div class="grow">
+      <label>作品名</label>
+      <input type="text" id="shapeName" placeholder="例：への字パッチ改">
+      <label>予想：共振周波数 (GHz)</label>
+      <input type="number" id="predF" step="0.01" min="0" placeholder="例：2.45">
+      <label>予想：最小S11 (dB)</label>
+      <input type="number" id="predS" step="0.5" max="0" placeholder="例：-20">
+      <label>形状コード</label>
+      <textarea id="codeOut" rows="5" readonly placeholder="「形状コードを発行」を押すとここに出ます"></textarea>
+      <div class="tools">
+        <button class="primary" id="btnIssue">🎫 形状コードを発行</button>
+        <button id="btnCopy">📋 コピー</button>
+      </div>
+      <p class="ok" id="copyMsg"></p>
+      <label>コードを読み込む（他人の作品や自分の保存分）</label>
+      <textarea id="codeIn" rows="3" placeholder="ALAB1: から始まるコードを貼り付け"></textarea>
+      <div class="tools"><button id="btnImport">📥 読み込む</button></div>
+      <p class="warn" id="importMsg"></p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>3Dテンプレート工作室 <span class="tag">NEC2 / openEMS</span></h2>
+  <p class="desc">立体・ワイヤ系はパラメータで設計します。種類を選んで寸法を入れると、そのまま解析に渡せる形状コードになります。</p>
+  <label>テンプレート</label>
+  <select id="tplSel">
+    <option value="biconical">バイコニカル（広帯域の王道）― openEMS/NEC2</option>
+    <option value="logperiodic">ログペリ（対数周期）― NEC2</option>
+    <option value="helical">ヘリカル（円偏波）― NEC2</option>
+    <option value="yagi">八木・宇田（指向性勝負）― NEC2</option>
+  </select>
+  <div class="paramgrid" id="tplParams" style="margin-top:12px;"></div>
+  <label>作品名</label>
+  <input type="text" id="tplName" placeholder="例：太っちょバイコニカル">
+  <div class="row">
+    <div class="grow"><label>予想：代表共振/中心周波数 (GHz)</label><input type="number" id="tplPredF" step="0.01" min="0" placeholder="例：1.50"></div>
+    <div class="grow"><label>予想：最小S11 (dB)</label><input type="number" id="tplPredS" step="0.5" max="0" placeholder="例：-15"></div>
+  </div>
+  <label>形状コード</label>
+  <textarea id="tplCodeOut" rows="4" readonly placeholder="「形状コードを発行」を押すとここに出ます"></textarea>
+  <div class="tools">
+    <button class="primary" id="tplIssue">🎫 形状コードを発行</button>
+    <button id="tplCopy">📋 コピー</button>
+  </div>
+  <p class="ok" id="tplCopyMsg"></p>
+</section>
+
+</main>
+<footer>
+  アンテナ実験室 ― てまごりゲーム集の一作です。解析は openEMS / NEC2 による実計算のみ。捏造数値は置きません。<br>
+  <a href="zukan.html">📖 図鑑（お手本とコレクション）へ</a>
+</footer>
+<script>
+(function(){
+  "use strict";
+  // ---------- 共通: base64url ----------
+  function b64e(bytes){ var s=""; bytes.forEach(function(b){ s+=String.fromCharCode(b); }); return btoa(s).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,""); }
+  function b64d(str){ str=str.replace(/-/g,"+").replace(/_/g,"/"); while(str.length%4) str+="="; var s=atob(str); var out=new Uint8Array(s.length); for(var i=0;i<s.length;i++) out[i]=s.charCodeAt(i); return out; }
+  function encodeCode(obj){ return "ALAB1:" + b64e(new TextEncoder().encode(JSON.stringify(obj))); }
+  function decodeCode(txt){ txt=txt.trim(); if(txt.indexOf("ALAB1:")!==0) throw new Error("ALAB1: で始まるコードではありません"); return JSON.parse(new TextDecoder().decode(b64d(txt.slice(6)))); }
+
+  // ---------- 平面エディタ ----------
+  var N=40, CELL_MM=2, cv=document.getElementById("board"), ctx=cv.getContext("2d"), PX=cv.width/N;
+  var grid=new Uint8Array(N*N), feed=null, tool="paint", drawing=false;
+  function cellXY(i,j){ return [ -39+2*i, 39-2*j ]; }
+  function cellFromMM(x,y){ return [ Math.round((x+39)/2), Math.round((39-y)/2) ]; }
+  function draw(){
+    ctx.fillStyle="#0a0e14"; ctx.fillRect(0,0,cv.width,cv.height);
+    ctx.strokeStyle="#22304a"; ctx.lineWidth=1;
+    for(var k=0;k<=N;k++){ ctx.beginPath(); ctx.moveTo(k*PX,0); ctx.lineTo(k*PX,cv.height); ctx.stroke(); ctx.beginPath(); ctx.moveTo(0,k*PX); ctx.lineTo(cv.width,k*PX); ctx.stroke(); }
+    ctx.strokeStyle="#48608c"; ctx.beginPath(); ctx.moveTo(cv.width/2,0); ctx.lineTo(cv.width/2,cv.height); ctx.stroke(); ctx.beginPath(); ctx.moveTo(0,cv.height/2); ctx.lineTo(cv.width,cv.height/2); ctx.stroke();
+    ctx.fillStyle="#d98a4a";
+    for(var j=0;j<N;j++) for(var i=0;i<N;i++) if(grid[j*N+i]) ctx.fillRect(i*PX+0.5,j*PX+0.5,PX-1,PX-1);
+    if(feed){ var fx=feed[0]*PX+PX/2, fy=feed[1]*PX+PX/2;
+      ctx.strokeStyle="#ff5252"; ctx.lineWidth=2.4; ctx.beginPath(); ctx.moveTo(fx-9,fy); ctx.lineTo(fx+9,fy); ctx.moveTo(fx,fy-9); ctx.lineTo(fx,fy+9); ctx.stroke();
+      ctx.fillStyle="#ff5252"; ctx.beginPath(); ctx.arc(fx,fy,3.4,0,7); ctx.fill(); }
+    stats();
+  }
+  function stats(){
+    var n=0; for(var k=0;k<grid.length;k++) n+=grid[k];
+    document.getElementById("statCells").textContent=n+" セル";
+    document.getElementById("statArea").textContent=(n*CELL_MM*CELL_MM)+" mm²";
+    var w=document.getElementById("feedWarn");
+    if(!feed){ document.getElementById("statFeed").textContent="未設定"; w.textContent="⚠ 給電点が未設定です"; }
+    else{ var mm=cellXY(feed[0],feed[1]); document.getElementById("statFeed").textContent="("+mm[0]+", "+mm[1]+") mm";
+      w.textContent = grid[feed[1]*N+feed[0]] ? "" : "⚠ 給電点が銅箔の上にありません。このままだと解析できません"; }
+  }
+  function evCell(e){ var r=cv.getBoundingClientRect(); var i=Math.floor((e.clientX-r.left)/r.width*N), j=Math.floor((e.clientY-r.top)/r.height*N); if(i<0||j<0||i>=N||j>=N) return null; return [i,j]; }
+  function apply(e){ var c=evCell(e); if(!c) return; if(tool==="feed"){ feed=c; } else { grid[c[1]*N+c[0]] = (tool==="paint")?1:0; } draw(); }
+  cv.addEventListener("pointerdown",function(e){ drawing=true; cv.setPointerCapture(e.pointerId); apply(e); });
+  cv.addEventListener("pointermove",function(e){ if(drawing && tool!=="feed") apply(e); });
+  cv.addEventListener("pointerup",function(){ drawing=false; });
+  function setTool(t){ tool=t; ["toolPaint","toolErase","toolFeed"].forEach(function(id){ document.getElementById(id).classList.remove("on"); }); document.getElementById(t==="paint"?"toolPaint":t==="erase"?"toolErase":"toolFeed").classList.add("on"); }
+  document.getElementById("toolPaint").onclick=function(){ setTool("paint"); };
+  document.getElementById("toolErase").onclick=function(){ setTool("erase"); };
+  document.getElementById("toolFeed").onclick=function(){ setTool("feed"); };
+  document.getElementById("btnClear").onclick=function(){ grid=new Uint8Array(N*N); draw(); };
+  document.getElementById("btnFill").onclick=function(){ grid.fill(1); draw(); };
+  function presetRect(fx,fy){ grid=new Uint8Array(N*N); for(var j=0;j<N;j++) for(var i=0;i<N;i++){ var mm=cellXY(i,j); if(Math.abs(mm[0])<=18.65 && Math.abs(mm[1])<=14.5) grid[j*N+i]=1; } feed=cellFromMM(fx,fy); draw(); }
+  function presetCircle(){ grid=new Uint8Array(N*N); for(var j=0;j<N;j++) for(var i=0;i<N;i++){ var mm=cellXY(i,j); if(Math.hypot(mm[0],mm[1])<=17) grid[j*N+i]=1; } feed=cellFromMM(6,0); draw(); }
+  document.getElementById("presetInset").onclick=function(){ presetRect(0,-6.5); document.getElementById("shapeName").value="お手本① 長方形＋内側給電"; };
+  document.getElementById("presetCenter").onclick=function(){ presetRect(0,0); document.getElementById("shapeName").value="お手本② 長方形＋中心給電"; };
+  document.getElementById("presetCircle").onclick=function(){ presetCircle(); document.getElementById("shapeName").value="お手本③ 円形＋6mm給電"; };
+  function packGrid(){ var bytes=new Uint8Array(N*N/8); for(var k=0;k<N*N;k++) if(grid[k]) bytes[k>>3]|=(1<<(k&7)); return b64e(bytes); }
+  function unpackGrid(s){ var bytes=b64d(s); grid=new Uint8Array(N*N); for(var k=0;k<N*N;k++) grid[k]=(bytes[k>>3]>>(k&7))&1; }
+  document.getElementById("btnIssue").onclick=function(){
+    var obj={ v:1, kind:"planar", name:document.getElementById("shapeName").value||"無題", board:{size_mm:80,cell_mm:CELL_MM,substrate:"FR-4 1.6mm",feed_type:"probe 50ohm"},
+      grid_b64:packGrid(), feed_mm: feed? cellXY(feed[0],feed[1]) : null,
+      pred:{ f_ghz: parseFloat(document.getElementById("predF").value)||null, s11_db: parseFloat(document.getElementById("predS").value)||null } };
+    document.getElementById("codeOut").value=encodeCode(obj);
+  };
+  document.getElementById("btnCopy").onclick=function(){ var t=document.getElementById("codeOut"); t.select(); var done=function(){ document.getElementById("copyMsg").textContent="コピーしました。Muse のチャットに貼って渡してください。"; }; if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(t.value).then(done,done); } else { document.execCommand("copy"); done(); } };
+  document.getElementById("btnImport").onclick=function(){
+    var msg=document.getElementById("importMsg");
+    try{ var obj=decodeCode(document.getElementById("codeIn").value); if(obj.kind!=="planar") throw new Error("平面パターンのコードではありません");
+      unpackGrid(obj.grid_b64); feed = obj.feed_mm? cellFromMM(obj.feed_mm[0],obj.feed_mm[1]) : null;
+      document.getElementById("shapeName").value=obj.name||""; draw(); msg.textContent=""; document.getElementById("copyMsg").textContent="読み込みました："+(obj.name||"無題");
+    }catch(err){ msg.textContent="⚠ 読み込めませんでした："+err.message; }
+  };
+  draw();
+
+  // ---------- 3Dテンプレート ----------
+  var TPLS={
+    biconical:[ ["cone_len_mm","片側コーン長 (mm)",50,5,300,1], ["half_angle_deg","開き半角 (deg)",30,5,80,1], ["gap_mm","中心ギャップ (mm)",2,0.5,20,0.5] ],
+    logperiodic:[ ["n_elements","素子数",10,4,30,1], ["tau","τ（縮小率）",0.90,0.80,0.98,0.01], ["sigma","σ（間隔率）",0.16,0.05,0.30,0.01], ["f_low_ghz","最低周波数 (GHz)",1.0,0.1,10,0.1] ],
+    helical:[ ["turns","巻数",6,1,20,0.5], ["diameter_mm","コイル直径 (mm)",40,5,200,1], ["pitch_mm","ピッチ (mm)",31,3,200,1], ["wire_mm","線径 (mm)",2,0.5,10,0.5] ],
+    yagi:[ ["n_elements","素子数（反射器+輻射器+導波器）",5,3,20,1], ["freq_ghz","設計周波数 (GHz)",2.45,0.1,10,0.01], ["boom_mm","ブーム長さ目安 (mm)",120,20,600,5] ]
+  };
+  var sel=document.getElementById("tplSel"), box=document.getElementById("tplParams");
+  function renderParams(){ box.innerHTML=""; TPLS[sel.value].forEach(function(p){ var d=document.createElement("div"); d.innerHTML='<label>'+p[1]+'</label><input type="number" id="tp_'+p[0]+'" value="'+p[2]+'" min="'+p[3]+'" max="'+p[4]+'" step="'+p[5]+'">'; box.appendChild(d); }); }
+  sel.onchange=renderParams; renderParams();
+  document.getElementById("tplIssue").onclick=function(){
+    var params={}; TPLS[sel.value].forEach(function(p){ params[p[0]]=parseFloat(document.getElementById("tp_"+p[0]).value); });
+    var obj={ v:1, kind:"param", template:sel.value, name:document.getElementById("tplName").value||"無題", params:params,
+      pred:{ f_ghz: parseFloat(document.getElementById("tplPredF").value)||null, s11_db: parseFloat(document.getElementById("tplPredS").value)||null } };
+    document.getElementById("tplCodeOut").value=encodeCode(obj);
+  };
+  document.getElementById("tplCopy").onclick=function(){ var t=document.getElementById("tplCodeOut"); t.select(); var done=function(){ document.getElementById("tplCopyMsg").textContent="コピーしました。Muse のチャットに貼って渡してください。"; }; if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(t.value).then(done,done); } else { document.execCommand("copy"); done(); } };
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>アンテナ実験室 ― 図鑑 | てまごりゲーム集</title>
+<style>
+  :root{ --bg:#0f141b; --panel:#182130; --panel2:#1f2a3d; --line:#2c3a52; --txt:#e8edf4; --sub:#9fb0c7; --acc:#ffb454; --good:#57d977; --warn:#ff7a7a; }
+  *{ box-sizing:border-box; }
+  body{ margin:0; background:var(--bg); color:var(--txt); font-family:"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif; }
+  header{ padding:20px 16px 10px; text-align:center; }
+  header h1{ margin:0; font-size:1.9rem; letter-spacing:.05em; }
+  header p{ color:var(--sub); margin:6px 0 0; }
+  nav{ display:flex; gap:10px; justify-content:center; margin:14px 0 4px; flex-wrap:wrap; }
+  nav a{ color:var(--txt); text-decoration:none; background:var(--panel2); border:1px solid var(--line); padding:8px 18px; border-radius:999px; }
+  nav a.here{ background:var(--acc); color:#23180a; font-weight:700; border-color:var(--acc); }
+  main{ max-width:980px; margin:0 auto; padding:10px 14px 40px; }
+  section{ background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:18px; margin:16px 0; }
+  h2{ margin:0 0 8px; font-size:1.25rem; }
+  .desc{ color:var(--sub); font-size:.92rem; line-height:1.65; }
+  .card{ background:var(--panel2); border:1px solid var(--line); border-radius:12px; padding:16px; margin:14px 0; }
+  .card h3{ margin:0 0 4px; font-size:1.12rem; }
+  .rank{ display:inline-block; font-weight:800; border-radius:8px; padding:2px 12px; margin-left:8px; vertical-align:middle; }
+  .rankS{ background:#ffd94d; color:#23180a; } .rankA{ background:#57d977; color:#0c2413; } .rankB{ background:#6db3ff; color:#0a1a2e; } .rankC{ background:#8a97a8; color:#10151c; }
+  .badge{ display:inline-block; font-size:.74rem; background:#31405e; color:var(--txt); border-radius:6px; padding:2px 8px; margin-left:6px; vertical-align:middle; }
+  .badge.lesson{ background:#7a2e2e; }
+  .imgs{ display:flex; gap:12px; flex-wrap:wrap; margin:10px 0; }
+  .imgs figure{ margin:0; flex:1 1 260px; }
+  .imgs img{ width:100%; border-radius:8px; border:1px solid var(--line); background:#fff; }
+  .imgs figcaption{ color:var(--sub); font-size:.8rem; text-align:center; margin-top:4px; }
+  table{ border-collapse:collapse; width:100%; margin:8px 0; font-size:.92rem; }
+  th,td{ border:1px solid var(--line); padding:6px 9px; text-align:left; }
+  th{ background:#141d2e; color:var(--sub); font-weight:600; white-space:nowrap; }
+  .note{ color:var(--sub); font-size:.9rem; line-height:1.7; }
+  .note b{ color:var(--txt); }
+  button{ background:var(--panel); color:var(--txt); border:1px solid var(--line); border-radius:8px; padding:8px 14px; font-size:.92rem; cursor:pointer; }
+  button:hover{ border-color:var(--acc); }
+  button.primary{ background:var(--acc); color:#23180a; font-weight:700; border-color:var(--acc); }
+  button.del{ float:right; font-size:.8rem; padding:4px 10px; }
+  textarea{ width:100%; background:#0d1320; color:var(--txt); border:1px solid var(--line); border-radius:8px; padding:9px 10px; font-size:.8rem; font-family:ui-monospace,Menlo,monospace; }
+  .warn{ color:var(--warn); font-size:.88rem; }
+  .quest{ line-height:1.9; color:var(--sub); } .quest b{ color:var(--txt); }
+  footer{ text-align:center; color:var(--sub); font-size:.82rem; padding:0 14px 30px; line-height:1.7; }
+  footer a{ color:var(--acc); }
+  details{ margin:10px 0; } summary{ cursor:pointer; color:var(--acc); font-size:.9rem; }
+  pre{ background:#0d1320; border:1px solid var(--line); border-radius:8px; padding:10px; overflow:auto; font-size:.76rem; }
+</style>
+</head>
+<body>
+<header>
+  <h1>📡 アンテナ実験室</h1>
+  <p>解析結果のコレクション ― お手本と、あなたの作品の記録</p>
+  <nav>
+    <a href="index.html">🔧 工作室</a>
+    <a href="zukan.html" class="here">📖 図鑑</a>
+    <a href="https://naway0141-source.github.io/">🎮 てまごりゲーム集</a>
+  </nav>
+</header>
+<main>
+
+<section>
+  <h2>ランクと称号</h2>
+  <p class="desc">ランクは最小S11（整合の深さ）と放射効率で決まります。<b>S</b>： S11 ≤ −25 dB かつ 効率 ≥ 0.25 ／ <b>A</b>： S11 ≤ −15 dB ／ <b>B</b>： S11 ≤ −10 dB ／ <b>C</b>： それ以下。効率が取れない解析ではS11のみで判定します。</p>
+  <p class="desc">称号は図鑑の登録数で育ちます： 1件「実験室見習い」→ 3件「駆け出し研究員」→ 5件「研究員」→ 10件「主任研究員」。給電点だけを変えた実験ペアを揃えた人には名誉称号「給電点マスター」が（主査の認定で）贈られます。</p>
+  <h2 style="margin-top:18px;">クエスト掲示板</h2>
+  <ul class="quest">
+    <li><b>Q1</b>： 2.45 GHz で最も効率の高い平面パターンを作れ（お手本の 0.28 を超えられるか）</li>
+    <li><b>Q2</b>： VSWR ≤ 2 の帯域が一番広いバイコニカルを設計せよ</li>
+    <li><b>Q3</b>： 給電点を 3 か所以上変えて、同じ形の S11 の違いを並べよ（給電点マスターへの道）</li>
+    <li><b>Q4</b>： 円形パッチより深い S11（−33.1 dB 超え）を出す形を作れ</li>
+  </ul>
+</section>
+
+<section>
+  <h2>お手本（公式エントリ）</h2>
+  <p class="desc">実験室の主査（AI）が openEMS で実計算したスターター3形状。基板は 80×80 mm・FR-4 1.6 mm・裏面全面GND・プローブ給電、評価帯域 1.0–4.0 GHz。なお長方形・円形とも基本共振は設計目標 2.45 GHz より約6%低い 2.31 GHz で、両形状で同量のずれ ― ポート列のローディング等による系統的ずれと考えられます（実測値として記録）。</p>
+
+  <div class="card">
+    <h3>円形パッチ（R17 mm）＋ 中心から +6 mm 給電 <span class="rank rankS">S</span><span class="badge">お手本③</span></h3>
+    <div class="imgs">
+      <figure><img src="assets/antlab_circle_edge_s11_v1.png" alt="circle_edge S11"><figcaption>S11（1–4 GHz）</figcaption></figure>
+      <figure><img src="assets/antlab_circle_edge_pattern_v1.png" alt="circle_edge pattern"><figcaption>放射パターン @共振</figcaption></figure>
+    </div>
+    <table>
+      <tr><th>共振周波数</th><td>2.312 GHz</td><th>最小S11</th><td>−33.1 dB</td></tr>
+      <tr><th>Zin @共振</th><td>50.0 + j2.2 Ω</td><th>指向性 Dmax</th><td>8.37 dBi</td></tr>
+      <tr><th>放射効率</th><td>0.27</td><th>前後比</th><td>23.0 dB</td></tr>
+    </table>
+    <p class="note">中心から 6 mm のオフセット給電が TM110 モードの整合点に一致し、<b>ほぼ完全な整合（50.0 + j2.2 Ω）</b>。3ケース中もっとも素直な特性で、文句なしの S ランク。</p>
+  </div>
+
+  <div class="card">
+    <h3>長方形パッチ（37.3×29.0 mm）＋ エッジから 8 mm 給電 <span class="rank rankA">A</span><span class="badge">お手本①</span></h3>
+    <div class="imgs">
+      <figure><img src="assets/antlab_rect_inset_s11_v1.png" alt="rect_inset S11"><figcaption>S11（1–4 GHz）</figcaption></figure>
+      <figure><img src="assets/antlab_rect_inset_pattern_v1.png" alt="rect_inset pattern"><figcaption>放射パターン @共振</figcaption></figure>
+    </div>
+    <table>
+      <tr><th>共振周波数</th><td>2.305 GHz</td><th>最小S11</th><td>−18.5 dB</td></tr>
+      <tr><th>Zin @共振</th><td>40.7 + j5.3 Ω</td><th>指向性 Dmax</th><td>8.37 dBi</td></tr>
+      <tr><th>放射効率</th><td>0.28</td><th>前後比</th><td>21.2 dB</td></tr>
+    </table>
+    <p class="note">教科書どおりの標準給電。エッジの高インピーダンス（〜200 Ω級）が、給電点を 8 mm 入れることで 50 Ω 近くまで下がっていることが Zin から読み取れます。3.7 GHz 付近に高次モードのディップも見えます。</p>
+  </div>
+
+  <div class="card">
+    <h3>長方形パッチ（同上）＋ 中心給電 <span class="rank rankB">B</span><span class="badge">お手本②</span><span class="badge lesson">教訓枠</span></h3>
+    <div class="imgs">
+      <figure><img src="assets/antlab_rect_center_s11_v1.png" alt="rect_center S11"><figcaption>S11（1–4 GHz）</figcaption></figure>
+      <figure><img src="assets/antlab_rect_center_pattern_v1.png" alt="rect_center pattern"><figcaption>放射パターン @3.715 GHz</figcaption></figure>
+    </div>
+    <table>
+      <tr><th>帯域内最小S11</th><td>−11.5 dB（@3.715 GHz・高次モード）</td><th>Zin @その点</th><td>72.1 − j24.9 Ω</td></tr>
+      <tr><th>基本モード(2.3 GHz)</th><td>S11 ≈ −0.04 dB（ほぼ全反射）／ Zin ≈ 0.1 + j11 Ω</td><th>前後比</th><td>3.9 dB</td></tr>
+      <tr><th>指向性 Dmax</th><td>8.93 dBi（@3.715 GHz）</td><th>放射効率</th><td>0.31（同）</td></tr>
+    </table>
+    <p class="note"><b>給電点の教訓ケース。</b>パッチ中心は基本モードの電界の節（電界ゼロ・短絡点）にあたるため、給電しても電力がまったく入りません。帯域内の唯一のディップは中心に腹を持つ高次モードのもの。<b>同じ形でも給電点の位置だけで「よく飛ぶアンテナ」にも「全く飛ばない板」にもなる</b> ― お手本①との対比がそれを示します。</p>
+  </div>
+</section>
+
+<section>
+  <h2>あなたのコレクション</h2>
+  <p class="desc">解析結果カード（チャットで返ってくる JSON）を貼ると、このブラウザに保存されて図鑑に並びます。現在の称号： <b id="myTitle">（まだ登録なし）</b> ／ 登録数 <b id="myCount">0</b> 件</p>
+  <textarea id="cardIn" rows="4" placeholder='{"name":"…","solver":"openEMS","res_freq_ghz":…,"s11_min_db":…} の形の結果カード JSON を貼り付け'></textarea>
+  <div style="margin:10px 0;"><button class="primary" id="btnAdd">📖 図鑑に登録</button></div>
+  <p class="warn" id="addMsg"></p>
+  <details>
+    <summary>結果カードの形式（例）</summary>
+    <pre>{"name":"円形パッチ改","solver":"openEMS","res_freq_ghz":2.312,"s11_min_db":-33.1,
+"zin_real":50.0,"zin_imag":2.2,"dmax_dbi":8.37,"efficiency":0.27,"fb_ratio_db":23.0,
+"pred_f_ghz":2.45,"pred_s11_db":-20,"note":"ひとこと所見"}</pre>
+    <p class="desc">pred_* は提出時の予想。登録すると予想との差（読みの精度）も表示されます。</p>
+  </details>
+  <div id="myCards"></div>
+</section>
+
+</main>
+<footer>
+  アンテナ実験室 ― 数値はすべて openEMS / NEC2 の実計算値です。<br>
+  <a href="index.html">🔧 工作室へ戻る</a>
+</footer>
+<script>
+(function(){
+  "use strict";
+  var KEY="antlab_collection_v1";
+  function load(){ try{ return JSON.parse(localStorage.getItem(KEY))||[]; }catch(e){ return []; } }
+  function save(a){ localStorage.setItem(KEY, JSON.stringify(a)); }
+  function rankOf(c){ if(typeof c.s11_min_db!=="number") return "C"; var s=c.s11_min_db;
+    if(s<=-25 && typeof c.efficiency==="number" && c.efficiency>=0.25) return "S";
+    if(s<=-15) return "A"; if(s<=-10) return "B"; return "C"; }
+  function titleOf(n){ if(n>=10) return "主任研究員"; if(n>=5) return "研究員"; if(n>=3) return "駆け出し研究員"; if(n>=1) return "実験室見習い"; return "（まだ登録なし）"; }
+  function esc(s){ return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+  function fmt(v,d){ return (typeof v==="number")? v.toFixed(d) : "―"; }
+  function render(){
+    var arr=load();
+    document.getElementById("myCount").textContent=arr.length;
+    document.getElementById("myTitle").textContent=titleOf(arr.length);
+    var box=document.getElementById("myCards"); box.innerHTML="";
+    arr.forEach(function(c,idx){
+      var r=rankOf(c);
+      var zin=(typeof c.zin_real==="number")? fmt(c.zin_real,1)+" "+(c.zin_imag>=0?"+":"−")+" j"+fmt(Math.abs(c.zin_imag||0),1)+" Ω" : "―";
+      var pred="";
+      if(typeof c.pred_f_ghz==="number" && typeof c.res_freq_ghz==="number"){ var df=c.res_freq_ghz-c.pred_f_ghz; pred="予想 "+fmt(c.pred_f_ghz,2)+" GHz → 実測 "+fmt(c.res_freq_ghz,3)+" GHz（差 "+(df>=0?"+":"")+fmt(df,3)+" GHz）"; }
+      if(typeof c.pred_s11_db==="number" && typeof c.s11_min_db==="number"){ pred+=(pred?" ／ ":"")+"S11予想 "+fmt(c.pred_s11_db,0)+" dB → 実測 "+fmt(c.s11_min_db,1)+" dB"; }
+      var div=document.createElement("div"); div.className="card";
+      div.innerHTML='<button class="del" data-del="'+idx+'">削除</button><h3>'+esc(c.name||"無題")+' <span class="rank rank'+r+'">'+r+'</span>'+(c.solver?'<span class="badge">'+esc(c.solver)+'</span>':"")+'</h3>'
+        +'<table><tr><th>共振周波数</th><td>'+fmt(c.res_freq_ghz,3)+' GHz</td><th>最小S11</th><td>'+fmt(c.s11_min_db,1)+' dB</td></tr>'
+        +'<tr><th>Zin @共振</th><td>'+zin+'</td><th>指向性 Dmax</th><td>'+fmt(c.dmax_dbi,2)+' dBi</td></tr>'
+        +'<tr><th>放射効率</th><td>'+fmt(c.efficiency,2)+'</td><th>前後比</th><td>'+fmt(c.fb_ratio_db,1)+' dB</td></tr></table>'
+        +(pred?'<p class="note">🎯 '+esc(pred)+'</p>':"")
+        +(c.note?'<p class="note">'+esc(c.note)+'</p>':"");
+      box.appendChild(div);
+    });
+    box.querySelectorAll("[data-del]").forEach(function(b){ b.onclick=function(){ var a=load(); a.splice(parseInt(b.getAttribute("data-del"),10),1); save(a); render(); }; });
+  }
+  document.getElementById("btnAdd").onclick=function(){
+    var msg=document.getElementById("addMsg");
+    try{ var c=JSON.parse(document.getElementById("cardIn").value); if(typeof c!=="object"||!c) throw new Error("JSONではありません");
+      var a=load(); a.unshift(c); save(a); render(); msg.textContent=""; document.getElementById("cardIn").value="";
+    }catch(e){ msg.textContent="⚠ 登録できませんでした："+e.message; }
+  };
+  render();
+})();
+</script>
+</body>
+</html>
