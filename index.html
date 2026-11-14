@@ -5,352 +5,180 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>アンテナ実験室 ― 工作室 | てまごりゲーム集</title>
 <style>
-  :root{ --bg:#0f141b; --panel:#182130; --panel2:#1f2a3d; --line:#2c3a52; --txt:#e8edf4; --sub:#9fb0c7; --acc:#ffb454; --warn:#ff7a7a; --good:#57d977; --copper:#d98a4a; }
-  *{ box-sizing:border-box; }
-  body{ margin:0; background:var(--bg); color:var(--txt); font-family:"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif; }
-  header{ padding:20px 16px 10px; text-align:center; }
-  header h1{ margin:0; font-size:1.9rem; letter-spacing:.05em; }
-  header p{ color:var(--sub); margin:6px 0 0; }
-  nav{ display:flex; gap:10px; justify-content:center; margin:14px 0 4px; flex-wrap:wrap; }
-  nav a{ color:var(--txt); text-decoration:none; background:var(--panel2); border:1px solid var(--line); padding:8px 18px; border-radius:999px; }
-  nav a.here{ background:var(--acc); color:#23180a; font-weight:700; border-color:var(--acc); }
-  main{ max-width:980px; margin:0 auto; padding:10px 14px 40px; }
-  section{ background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:18px; margin:16px 0; }
-  h2{ margin:0 0 6px; font-size:1.25rem; }
-  .desc{ color:var(--sub); font-size:.92rem; line-height:1.6; margin:4px 0 12px; }
-  .row{ display:flex; gap:14px; flex-wrap:wrap; }
-  .grow{ flex:1 1 300px; }
-  .tabs{ display:flex; gap:8px; margin:6px 0 14px; flex-wrap:wrap; }
-  .tabs button{ font-size:1rem; padding:10px 18px; }
-  canvas#board{ width:100%; max-width:480px; aspect-ratio:1; background:#0a0e14; border:1px solid var(--line); border-radius:8px; touch-action:none; cursor:crosshair; }
-  .tools{ display:flex; gap:8px; flex-wrap:wrap; margin:10px 0; }
-  button{ background:var(--panel2); color:var(--txt); border:1px solid var(--line); border-radius:8px; padding:8px 14px; font-size:.92rem; cursor:pointer; }
-  button:hover{ border-color:var(--acc); }
-  button.on{ background:var(--acc); color:#23180a; font-weight:700; border-color:var(--acc); }
-  button.primary{ background:var(--acc); color:#23180a; font-weight:700; border-color:var(--acc); font-size:1rem; padding:10px 22px; }
-  button.danger{ border-color:#7a2e2e; }
-  label{ font-size:.88rem; color:var(--sub); display:block; margin:10px 0 4px; }
-  input[type=text], input[type=number], select, textarea{ width:100%; background:#0d1320; color:var(--txt); border:1px solid var(--line); border-radius:8px; padding:9px 10px; font-size:.95rem; }
-  textarea{ font-family:ui-monospace,Menlo,monospace; font-size:.78rem; word-break:break-all; }
-  .stat{ font-size:.9rem; color:var(--sub); line-height:1.7; }
-  .stat b{ color:var(--txt); }
-  .warn{ color:var(--warn); font-size:.88rem; min-height:1.2em; }
-  .ok{ color:var(--good); font-size:.88rem; }
-  .preset{ border-style:dashed; }
-  ol.howto{ line-height:1.9; color:var(--sub); }
-  ol.howto b{ color:var(--txt); }
-  footer{ text-align:center; color:var(--sub); font-size:.82rem; padding:0 14px 30px; line-height:1.7; }
-  footer a{ color:var(--acc); }
-  .paramgrid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:10px; }
-  .hidden{ display:none; }
-  .partlist{ list-style:none; margin:8px 0; padding:0; }
-  .partlist li{ background:var(--panel2); border:1px solid var(--line); border-radius:8px; padding:7px 10px; margin:5px 0; cursor:pointer; font-size:.9rem; }
-  .partlist li.sel{ border-color:var(--acc); background:#2a2417; }
-  .partlist .cut{ color:var(--warn); }
+:root{ --bg:#0f141b; --panel:#182130; --panel2:#1f2a3d; --line:#2c3a52; --txt:#e8edf4; --sub:#9fb0c7; --acc:#ffb454; --warn:#ff7a7a; --good:#57d977; --copper:#d98a4a;}
+*{ box-sizing:border-box;}
+body{ margin:0; background:var(--bg); color:var(--txt); font-family:"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;}
+header{ padding:20px 16px 10px; text-align:center;}
+header h1{ margin:0; font-size:1.9rem; letter-spacing:.05em;}
+header p{ color:var(--sub); margin:6px 0 0;}
+nav{ display:flex; gap:10px; justify-content:center; margin:14px 0 4px; flex-wrap:wrap;}
+nav a{ color:var(--txt); text-decoration:none; background:var(--panel2); border:1px solid var(--line); padding:8px 18px; border-radius:999px;}
+nav a.here{ background:var(--acc); color:#23180a; font-weight:700; border-color:var(--acc);}
+main{ max-width:980px; margin:0 auto; padding:10px 14px 40px;}
+section{ background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:18px; margin:16px 0;}
+h2{ margin:0 0 6px; font-size:1.25rem;}
+.desc{ color:var(--sub); font-size:.92rem; line-height:1.6; margin:4px 0 12px;}
+.row{ display:flex; gap:14px; flex-wrap:wrap;}
+.grow{ flex:1 1 300px;}
+button{ background:var(--panel2); color:var(--txt); border:1px solid var(--line); border-radius:8px; padding:8px 14px; font-size:.92rem; cursor:pointer;}
+button:hover{ border-color:var(--acc);}
+button.primary{ background:var(--acc); color:#23180a; font-weight:700; border-color:var(--acc); font-size:1rem; padding:10px 22px;}
+label{ font-size:.88rem; color:var(--sub); display:block; margin:10px 0 4px;}
+input[type=text], input[type=number], textarea{ width:100%; background:#0d1320; color:var(--txt); border:1px solid var(--line); border-radius:8px; padding:9px 10px; font-size:.95rem;}
+textarea{ font-family:ui-monospace,Menlo,monospace; font-size:.82rem; word-break:break-all;}
+.stat{ font-size:.9rem; color:var(--sub); line-height:1.7;}
+.stat b{ color:var(--txt);}
+.warn{ color:var(--warn); font-size:.88rem; min-height:1.2em;}
+.ok{ color:var(--good); font-size:.88rem;}
+ol.howto{ line-height:1.9; color:var(--sub);}
+ol.howto b{ color:var(--txt);}
+footer{ text-align:center; color:var(--sub); font-size:.82rem; padding:0 14px 30px; line-height:1.7;}
+footer a{ color:var(--acc);}
+.hidden{ display:none;}
+#dropZone{ border:2px dashed var(--line); border-radius:12px; padding:26px 16px; text-align:center; color:var(--sub); cursor:pointer; background:#0d1320; line-height:1.7;}
+#dropZone:hover, #dropZone.over{ border-color:var(--acc); color:var(--txt);}
+#dropZone.big{ font-size:2rem; display:block; margin-bottom:6px;}
+#previewWrap{ text-align:center; margin-top:14px;}
+#previewImg{ max-width:100%; max-height:520px; border:1px solid var(--line); border-radius:8px; background:#fff;}
+.tools{ display:flex; gap:8px; flex-wrap:wrap; margin:10px 0; justify-content:center;}
+.checks{ list-style:none; margin:8px 0; padding:0; line-height:2;}
+.checks label{ display:inline; font-size:.95rem; color:var(--txt); margin:0;}
+.checks input{ width:auto; margin-right:8px;}
 </style>
 </head>
 <body>
 <header>
-  <h1>📡 アンテナ実験室</h1>
-  <p>人間が形を考えて、AIが裏で本物のシミュレーションを回す「AI設計ゲーム」</p>
-  <nav>
-    <a href="index.html" class="here">🔧 工作室</a>
-    <a href="zukan.html">📖 図鑑</a>
-    <a href="https://naway0141-source.github.io/">🎮 てまごりゲーム集</a>
-  </nav>
+<h1>📡 アンテナ実験室</h1>
+<p>人間が形を考えて、AIが裏で本物のシミュレーションを回す「AI設計ゲーム」</p>
+<nav>
+<a href="index.html" class="here">🔧 工作室</a>
+<a href="zukan.html">📖 図鑑</a>
+<a href="https://naway0141-source.github.io/">🎮 てまごりゲーム集</a>
+</nav>
 </header>
 <main>
 
 <section>
-  <h2>遊び方</h2>
-  <ol class="howto">
-    <li><b>一番かんたんな提出は、紙のポンチ絵の写真です</b>（下の「ポンチ絵の描き方」参照）。工作室のエディタを操作する必要はありません。紙に描いて、写真を Muse のチャットに送るだけ。</li>
-    <li><b>AIが清書して確認を返します</b> ― 写真を読み取り、寸法入りの清書図面にして「この形で合ってますか？」と返します。読み取れないところは推測せずに聞き返します。OKが出るまで解析は始めません。</li>
-    <li><b>AIが図面を見て解析を振り分け</b> ― 平面パターンは FDTD（openEMS）、細いワイヤの構造はモーメント法（NEC2）、立体物は FDTD、というように、形に合った解法を AI 側で選んで実計算し、結果カード（数値＋図）を返します。<b>解法選びは AI の仕事で、あなたの仕事ではありません。</b></li>
-    <li><b>図鑑に登録</b> ― 結果カードを取り込むとコレクションが増えます。予想と実測の読み比べも採点されます。</li>
-  </ol>
-  <p class="desc">数値はすべて実計算値です。取れない項目は「取れない」と書くのが実験室の流儀。平面図面の既定基板は 80×80 mm・FR-4 (εr 4.4, tanδ 0.02)・1.6 mm厚・裏面全面GND・プローブ給電 (50 Ω) です。寸法を 0.1 mm 単位で厳密に決めたいときだけ、下の工作室（精密モード）で図面コードを発行してください。</p>
+<h2>遊び方</h2>
+<ol class="howto">
+<li><b>提出は、紙のポンチ絵の写真です</b>（下の「ポンチ絵の描き方」参照）。エディタを操作する必要はありません。紙に描いて、写真を Muse のチャットに送るだけ。</li>
+<li><b>AIが清書して確認を返します</b> ― 写真を読み取り、寸法入りの清書図面にして「この形で合ってますか？」と返します。読み取れないところは推測せずに聞き返します。OKが出るまで解析は始めません。</li>
+<li><b>AIが図面を見て解析を振り分け</b> ― 平面パターンは FDTD（openEMS）、細いワイヤの構造はモーメント法（NEC2）、立体物は FDTD、というように、形に合った解法を AI 側で選んで実計算し、結果カード（数値＋図）を返します。<b>解法選びは AI の仕事で、あなたの仕事ではありません。</b></li>
+<li><b>図鑑に登録</b> ― 結果カードを取り込むとコレクションが増えます。予想と実測の読み比べも採点されます。</li>
+</ol>
+<p class="desc">数値はすべて実計算値です。取れない項目は「取れない」と書くのが実験室の流儀。平面図面の既定基板は 80×80 mm・FR-4 (εr 4.4, tanδ 0.02)・1.6 mm厚・裏面全面GND・プローブ給電 (50 Ω) です。下のアップロードコーナーで写真を選ぶと、送る前のチェックと提出メモの作成ができます。</p>
 </section>
 
 <section>
-  <h2>✏️ ポンチ絵の描き方（写真提出）</h2>
-  <p class="desc">これだけ守れば、あとは AI が清書します。きれいに描く必要はありません。</p>
-  <ol class="howto">
-    <li><b>白い紙に、太めの黒ペンで輪郭を描く</b> ― 銅箔になる部分は塗りつぶすか斜線を引く（中が銅なのか空洞なのか分かるように）。</li>
-    <li><b>給電点は ○ の中に 〜</b>（交流電源の記号）を描く。</li>
-    <li><b>寸法は全体の幅と高さだけでもOK</b> ― mm で書き添える。細部の寸法があれば矢印で書く。無ければ形の比率から AI が読み取り、清書で確認します。</li>
-    <li><b>予想を余白に書く</b> ― 共振しそうな周波数と最小S11の予想を書くのがこのゲームの作法です（任意）。</li>
-    <li><b>写真は真上から</b>、影が入らないように撮って、Muse のチャットに送る。</li>
-  </ol>
-  <p class="desc">立体アンテナ（ヘリカル・八木など）も、ポンチ絵＋主な寸法（長さ・直径・巻き数など）で提出できます。AI が図面を見て、平面・ワイヤ・立体を振り分けます。</p>
+<h2>✏️ ポンチ絵の描き方（写真提出）</h2>
+<p class="desc">これだけ守れば、あとは AI が清書します。きれいに描く必要はありません。</p>
+<ol class="howto">
+<li><b>白い紙に、太めの黒ペンで輪郭を描く</b> ― 銅箔になる部分は塗りつぶすか斜線を引く（中が銅なのか空洞なのか分かるように）。</li>
+<li><b>給電点は ○ の中に 〜</b>（交流電源の記号）を描く。</li>
+<li><b>寸法は全体の幅と高さだけでもOK</b> ― mm で書き添える。細部の寸法があれば矢印で書く。無ければ形の比率から AI が読み取り、清書で確認します。</li>
+<li><b>予想を余白に書く</b> ― 共振しそうな周波数と最小S11の予想を書くのがこのゲームの作法です（任意）。</li>
+<li><b>写真は真上から</b>、影が入らないように撮って、Muse のチャットに送る。</li>
+</ol>
+<p class="desc">立体アンテナ（ヘリカル・八木など）も、ポンチ絵＋主な寸法（長さ・直径・巻き数など）で提出できます。AI が図面を見て、平面・ワイヤ・立体を振り分けます。</p>
 </section>
 
 <section>
-  <h2>工作室（精密モード）</h2>
-  <p class="desc">寸法を厳密に決めたいとき用のエディタです。通常の提出は上のポンチ絵写真で十分です。2D と 3D は地続きで、提出はひとつの図面コード。解析の振り分けは AI が図面を見て行います。</p>
-  <div class="tabs">
-    <button id="tabDraw" class="on">🧩 平面を設計（部品配置）</button>
-    <button id="tabTpl">📐 立体の型紙</button>
-  </div>
+<h2>📤 写真アップロードコーナー</h2>
+<p class="desc">ポンチ絵の写真を選ぶと、その場で大きく表示して読み取りやすさをチェックできます。作品名と予想を入れると、提出メモが作れます。</p>
+<div id="dropZone">
+<span class="big">🖼️</span>
+ここに写真ファイルをドロップ、またはクリックして選択<br>
+<span style="font-size:.85rem;">（スマホなら写真ライブラリ／カメラから選べます）</span>
+</div>
+<input type="file" id="fileIn" accept="image/*" class="hidden">
+<div id="previewWrap" class="hidden">
+<img id="previewImg" alt="ポンチ絵のプレビュー">
+<div class="tools">
+<button id="rotL">↩ 左へ90°</button>
+<button id="rotR">↪ 右へ90°</button>
+<button id="btnClear">🗑 選び直す</button>
+</div>
+<p class="stat" id="fileInfo"></p>
+</div>
 
-  <div id="paneDraw">
-    <p class="desc">部品（長方形・円・楕円・リング・多角形）を置いて、寸法は mm 単位の数値で指定します。部品は重ねる順に合成され、「切り抜き」にした部品はスロットになります。図面は正確な寸法のまま渡され、AI 側で 0.1 mm ピッチに展開して解析します。部品はドラッグで移動、数値は右のパネルで編集できます。</p>
-    <div class="row">
-      <div>
-        <canvas id="board" width="480" height="480"></canvas>
-        <div class="tools">
-          <button id="addRect">＋ 長方形</button>
-          <button id="addCircle">＋ 円</button>
-          <button id="addEllipse">＋ 楕円</button>
-          <button id="addRing">＋ リング</button>
-          <button id="addPoly">＋ 多角形（点を打つ）</button>
-        </div>
-        <div class="tools">
-          <button id="toolMove" class="on">✥ 選択・移動</button>
-          <button id="toolFeed">📍 給電点を置く</button>
-          <button id="polyClose" class="hidden">✔ 多角形を閉じる</button>
-          <button id="polyCancel" class="hidden">多角形をやめる</button>
-        </div>
-        <div class="tools">
-          <button id="presetInset" class="preset">お手本① 長方形＋内側給電</button>
-          <button id="presetCenter" class="preset">お手本② 長方形＋中心給電</button>
-          <button id="presetCircle" class="preset">お手本③ 円形＋6mm給電</button>
-        </div>
-        <p class="stat">給電点: <b id="statFeed">未設定</b>（銅箔の上に置いてください）</p>
-        <p class="warn" id="feedWarn"></p>
-      </div>
-      <div class="grow">
-        <label>部品リスト（クリックで選択）</label>
-        <ul class="partlist" id="partList"></ul>
-        <div id="partEditor">
-          <p class="desc">部品を選ぶと、ここで寸法を編集できます。</p>
-        </div>
-        <div class="row">
-          <div class="grow"><label>給電点 X (mm)</label><input type="number" id="feedX" step="0.5"></div>
-          <div class="grow"><label>給電点 Y (mm)</label><input type="number" id="feedY" step="0.5"></div>
-        </div>
-      </div>
-    </div>
-  </div>
+<label>送る前チェック</label>
+<ul class="checks">
+<li><label><input type="checkbox" id="chkFeed">給電点の「○に〜」が描いてある</label></li>
+<li><label><input type="checkbox" id="chkDim">寸法（全体の幅と高さ）が書き込んである</label></li>
+<li><label><input type="checkbox" id="chkTop">真上から撮れている（斜め・影なし）</label></li>
+<li><label><input type="checkbox" id="chkCu">銅箔の部分が塗りつぶし／斜線で分かる</label></li>
+</ul>
 
-  <div id="paneTpl" class="hidden">
-    <p class="desc">立体・ワイヤ系は型紙に寸法を入れるタイプの図面です。種類と寸法がそのまま図面になります。</p>
-    <label>型紙</label>
-    <select id="tplSel">
-      <option value="biconical">バイコニカル（広帯域の王道）</option>
-      <option value="logperiodic">ログペリ（対数周期）</option>
-      <option value="helical">ヘリカル（円偏波）</option>
-      <option value="yagi">八木・宇田（指向性勝負）</option>
-    </select>
-    <div class="paramgrid" id="tplParams" style="margin-top:12px;"></div>
-  </div>
+<label>作品名</label>
+<input type="text" id="shapeName" placeholder="例：Uスロット付きパッチ">
+<div class="row">
+<div class="grow"><label>予想：共振/代表周波数 (GHz)</label><input type="number" id="predF" step="0.01" min="0" placeholder="例：2.45"></div>
+<div class="grow"><label>予想：最小S11 (dB)</label><input type="number" id="predS" step="0.5" max="0" placeholder="例：-20"></div>
+</div>
+<label>補足メモ（写真に書ききれなかった寸法など）</label>
+<input type="text" id="noteIn" placeholder="例：スロット幅は2mm、給電点は中心から下に6mm">
 
-  <div style="border-top:1px solid var(--line); margin-top:16px; padding-top:6px;">
-    <label>作品名</label>
-    <input type="text" id="shapeName" placeholder="例：Uスロット付きパッチ">
-    <div class="row">
-      <div class="grow"><label>予想：共振/代表周波数 (GHz)</label><input type="number" id="predF" step="0.01" min="0" placeholder="例：2.45"></div>
-      <div class="grow"><label>予想：最小S11 (dB)</label><input type="number" id="predS" step="0.5" max="0" placeholder="例：-20"></div>
-    </div>
-    <label>図面コード（いま開いているタブの図面が発行されます）</label>
-    <textarea id="codeOut" rows="5" readonly placeholder="「図面コードを発行」を押すとここに出ます"></textarea>
-    <div class="tools">
-      <button class="primary" id="btnIssue">🎫 図面コードを発行</button>
-      <button id="btnCopy">📋 コピー</button>
-    </div>
-    <p class="ok" id="copyMsg"></p>
-    <label>図面コードを読み込む（他人の作品や自分の保存分）</label>
-    <textarea id="codeIn" rows="3" placeholder="ALAB2: から始まるコードを貼り付け（旧形式 ALAB1: も可）"></textarea>
-    <div class="tools"><button id="btnImport">📥 読み込む</button></div>
-    <p class="warn" id="importMsg"></p>
-  </div>
+<label>提出メモ</label>
+<textarea id="memoOut" rows="7" readonly placeholder="「提出メモを作る」を押すとここに出ます"></textarea>
+<div class="tools" style="justify-content:flex-start;">
+<button class="primary" id="btnMemo">📝 提出メモを作る</button>
+<button id="btnCopy">📋 コピー</button>
+</div>
+<p class="ok" id="copyMsg"></p>
+<p class="warn" id="upWarn"></p>
+<p class="desc">※ 写真ファイルそのものは、このページからは送信されません（このページは静的ページで、送信先のサーバーがありません）。<b>Muse のチャットで写真を添付し、上の提出メモを一緒に貼って送ってください。</b>それが提出の正式ルートです。プレビューの回転は見やすさ確認用で、写真そのものは変わりません。</p>
 </section>
 
 </main>
 <footer>
-  アンテナ実験室 ― てまごりゲーム集の一作です。解析は図面に応じた解法（FDTD／モーメント法）による実計算のみ。捏造数値は置きません。<br>
-  <a href="zukan.html">📖 図鑑（お手本とコレクション）へ</a>
+アンテナ実験室 ― てまごりゲーム集の一作です。解析は図面に応じた解法（FDTD／モーメント法）による実計算のみ。捏造数値は置きません。<br>
+<a href="zukan.html">📖 図鑑（お手本とコレクション）へ</a>
 </footer>
 <script>
 (function(){
-  "use strict";
-  function b64e(bytes){ var s=""; bytes.forEach(function(b){ s+=String.fromCharCode(b); }); return btoa(s).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,""); }
-  function b64d(str){ str=str.replace(/-/g,"+").replace(/_/g,"/"); while(str.length%4) str+="="; var s=atob(str); var out=new Uint8Array(s.length); for(var i=0;i<s.length;i++) out[i]=s.charCodeAt(i); return out; }
-  function encodeCode(obj){ return "ALAB2:" + b64e(new TextEncoder().encode(JSON.stringify(obj))); }
-  function decodeAny(txt){ txt=txt.trim(); if(!/^ALAB[12]:/.test(txt)) throw new Error("ALAB2:（または旧形式 ALAB1:）で始まるコードではありません"); return JSON.parse(new TextDecoder().decode(b64d(txt.slice(6)))); }
-  function snap(v){ return Math.round(v*2)/2; }
-  function esc(s){ return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;"); }
-
-  // ---------- タブ ----------
-  var mode="draw";
-  function setMode(m){ mode=m;
-    document.getElementById("tabDraw").classList.toggle("on", m==="draw");
-    document.getElementById("tabTpl").classList.toggle("on", m==="tpl");
-    document.getElementById("paneDraw").classList.toggle("hidden", m!=="draw");
-    document.getElementById("paneTpl").classList.toggle("hidden", m!=="tpl");
-  }
-  document.getElementById("tabDraw").onclick=function(){ setMode("draw"); };
-  document.getElementById("tabTpl").onclick=function(){ setMode("tpl"); };
-
-  // ---------- ベクタ部品エディタ ----------
-  var cv=document.getElementById("board"), ctx=cv.getContext("2d"), W=cv.width;
-  var parts=[], sel=-1, feed=null, feedTool=false, polyMode=false, polyPts=[];
-  var drag=null;
-  function toPx(x,y){ return [ (x+40)/80*W, (40-y)/80*W ]; }
-  function toMM(px,py){ return [ px/W*80-40, 40-py/W*80 ]; }
-  function rasterGrid(p){ if(!p._grid){ var bytes=b64d(p.grid_b64); var g=new Uint8Array(1600); for(var k=0;k<1600;k++) g[k]=(bytes[k>>3]>>(k&7))&1; p._grid=g; } return p._grid; }
-  function inside(p,x,y){
-    if(p.kind==="rect") return Math.abs(x-p.cx)<=p.w/2 && Math.abs(y-p.cy)<=p.h/2;
-    if(p.kind==="circle") return Math.hypot(x-p.cx,y-p.cy)<=p.r;
-    if(p.kind==="ellipse"){ var a=(x-p.cx)/p.rx, b=(y-p.cy)/p.ry; return a*a+b*b<=1; }
-    if(p.kind==="ring"){ var d=Math.hypot(x-p.cx,y-p.cy); return d<=p.r_out && d>=p.r_in; }
-    if(p.kind==="polygon"){ var c=false; for(var i=0,j=p.pts.length-1;i<p.pts.length;j=i++){ var xi=p.pts[i][0], yi=p.pts[i][1], xj=p.pts[j][0], yj=p.pts[j][1]; if(((yi>y)!==(yj>y)) && (x < (xj-xi)*(y-yi)/(yj-yi)+xi)) c=!c; } return c; }
-    if(p.kind==="raster"){ var i=Math.floor((x+40)/2), j=Math.floor((40-y)/2); if(i<0||j<0||i>=40||j>=40) return false; return rasterGrid(p)[j*40+i]===1; }
-    return false;
-  }
-  function copperAt(x,y){ var s=false; parts.forEach(function(p){ if(inside(p,x,y)) s=(p.mode==="add"); }); return s; }
-  function pathOf(p){
-    var path=new Path2D();
-    if(p.kind==="rect"){ var a=toPx(p.cx-p.w/2, p.cy+p.h/2); path.rect(a[0],a[1], p.w/80*W, p.h/80*W); }
-    else if(p.kind==="circle"){ var c=toPx(p.cx,p.cy); path.arc(c[0],c[1], p.r/80*W, 0, 7); }
-    else if(p.kind==="ellipse"){ var c2=toPx(p.cx,p.cy); path.ellipse(c2[0],c2[1], p.rx/80*W, p.ry/80*W, 0, 0, 7); }
-    else if(p.kind==="ring"){ var c3=toPx(p.cx,p.cy); path.arc(c3[0],c3[1], p.r_out/80*W, 0, 7); path.arc(c3[0],c3[1], p.r_in/80*W, 0, 7); }
-    else if(p.kind==="polygon" && p.pts.length){ var s=toPx(p.pts[0][0],p.pts[0][1]); path.moveTo(s[0],s[1]); for(var i=1;i<p.pts.length;i++){ var q=toPx(p.pts[i][0],p.pts[i][1]); path.lineTo(q[0],q[1]); } path.closePath(); }
-    return path;
-  }
-  function draw(){
-    ctx.fillStyle="#0a0e14"; ctx.fillRect(0,0,W,W);
-    ctx.strokeStyle="#1d2a42"; ctx.lineWidth=1;
-    for(var k=0;k<=8;k++){ ctx.beginPath(); ctx.moveTo(k*W/8,0); ctx.lineTo(k*W/8,W); ctx.stroke(); ctx.beginPath(); ctx.moveTo(0,k*W/8); ctx.lineTo(W,k*W/8); ctx.stroke(); }
-    ctx.strokeStyle="#48608c"; ctx.beginPath(); ctx.moveTo(W/2,0); ctx.lineTo(W/2,W); ctx.stroke(); ctx.beginPath(); ctx.moveTo(0,W/2); ctx.lineTo(W,W/2); ctx.stroke();
-    parts.forEach(function(p,idx){
-      if(p.kind==="raster"){ var g=rasterGrid(p); ctx.fillStyle = p.mode==="add" ? "#d98a4a" : "#0a0e14"; for(var j=0;j<40;j++) for(var i=0;i<40;i++) if(g[j*40+i]) ctx.fillRect(i*W/40+0.5, j*W/40+0.5, W/40-1, W/40-1); }
-      else { var path=pathOf(p);
-        if(p.mode==="add"){ ctx.fillStyle="#d98a4a"; ctx.fill(path, p.kind==="ring"?"evenodd":"nonzero"); ctx.strokeStyle="#8a5322"; ctx.lineWidth=1.2; ctx.stroke(path); }
-        else { ctx.fillStyle="#0a0e14"; ctx.fill(path, p.kind==="ring"?"evenodd":"nonzero"); ctx.strokeStyle="#ff7a7a"; ctx.lineWidth=1.4; ctx.setLineDash([5,4]); ctx.stroke(path); ctx.setLineDash([]); }
-      }
-      if(idx===sel){ ctx.strokeStyle="#ffb454"; ctx.lineWidth=2.4; if(p.kind!=="raster") ctx.stroke(pathOf(p)); else { ctx.strokeRect(1,1,W-2,W-2); } }
-    });
-    if(polyMode && polyPts.length){ ctx.strokeStyle="#57d977"; ctx.lineWidth=1.6; ctx.beginPath(); polyPts.forEach(function(pt,i){ var q=toPx(pt[0],pt[1]); if(i===0) ctx.moveTo(q[0],q[1]); else ctx.lineTo(q[0],q[1]); }); ctx.stroke(); ctx.fillStyle="#57d977"; polyPts.forEach(function(pt){ var q=toPx(pt[0],pt[1]); ctx.beginPath(); ctx.arc(q[0],q[1],3,0,7); ctx.fill(); }); }
-    if(feed){ var f=toPx(feed[0],feed[1]); ctx.strokeStyle="#ff5252"; ctx.lineWidth=2.4; ctx.beginPath(); ctx.moveTo(f[0]-9,f[1]); ctx.lineTo(f[0]+9,f[1]); ctx.moveTo(f[0],f[1]-9); ctx.lineTo(f[0],f[1]+9); ctx.stroke(); ctx.fillStyle="#ff5252"; ctx.beginPath(); ctx.arc(f[0],f[1],3.4,0,7); ctx.fill(); }
-    stats();
-  }
-  function stats(){
-    var fx=document.getElementById("feedX"), fy=document.getElementById("feedY");
-    if(feed){ document.getElementById("statFeed").textContent="("+feed[0]+", "+feed[1]+") mm"; if(document.activeElement!==fx) fx.value=feed[0]; if(document.activeElement!==fy) fy.value=feed[1]; }
-    else { document.getElementById("statFeed").textContent="未設定"; }
-    var w=document.getElementById("feedWarn");
-    if(!feed) w.textContent="⚠ 給電点が未設定です";
-    else if(parts.length && !copperAt(feed[0],feed[1])) w.textContent="⚠ 給電点が銅箔の上にありません。このままだと解析できません";
-    else w.textContent="";
-  }
-  function label(p){
-    if(p.kind==="rect") return "長方形 "+p.w+"×"+p.h+" @ ("+p.cx+", "+p.cy+")";
-    if(p.kind==="circle") return "円 r="+p.r+" @ ("+p.cx+", "+p.cy+")";
-    if(p.kind==="ellipse") return "楕円 "+p.rx+"×"+p.ry+" @ ("+p.cx+", "+p.cy+")";
-    if(p.kind==="ring") return "リング R"+p.r_out+"/r"+p.r_in+" @ ("+p.cx+", "+p.cy+")";
-    if(p.kind==="polygon") return "多角形（"+p.pts.length+"点）";
-    if(p.kind==="raster") return "ピクセル図面（旧形式・編集不可）";
-    return p.kind;
-  }
-  function renderList(){
-    var ul=document.getElementById("partList"); ul.innerHTML="";
-    parts.forEach(function(p,idx){ var li=document.createElement("li"); if(idx===sel) li.className="sel"; li.innerHTML=esc(label(p))+(p.mode==="cut"?' <span class="cut">［切り抜き］</span>':""); li.onclick=function(){ sel=idx; renderList(); renderEditor(); draw(); }; ul.appendChild(li); });
-    if(!parts.length) ul.innerHTML='<li style="cursor:default;">（部品がありません。「＋」ボタンで追加）</li>';
-  }
-  var FIELDS={ rect:[["cx","中心X",0.5],["cy","中心Y",0.5],["w","幅",0.1],["h","高さ",0.1]], circle:[["cx","中心X",0.5],["cy","中心Y",0.5],["r","半径",0.1]], ellipse:[["cx","中心X",0.5],["cy","中心Y",0.5],["rx","半径X",0.1],["ry","半径Y",0.1]], ring:[["cx","中心X",0.5],["cy","中心Y",0.5],["r_out","外半径",0.1],["r_in","内半径",0.1]] };
-  function renderEditor(){
-    var box=document.getElementById("partEditor");
-    if(sel<0 || !parts[sel]){ box.innerHTML='<p class="desc">部品を選ぶと、ここで寸法を編集できます。</p>'; return; }
-    var p=parts[sel], html="";
-    if(p.kind==="raster"){ html='<p class="desc">旧形式のピクセル図面です。そのまま提出できます（編集は削除のみ）。</p>'; }
-    else if(p.kind==="polygon"){ html='<p class="desc">多角形は頂点の編集に対応していません。直す場合は削除して打ち直してください。</p>'; }
-    else { html='<div class="paramgrid">'; FIELDS[p.kind].forEach(function(f){ html+='<div><label>'+f[1]+' (mm)</label><input type="number" step="'+f[2]+'" data-f="'+f[0]+'" value="'+p[f[0]]+'"></div>'; }); html+='</div>'; }
-    if(p.kind!=="raster"){ html+='<label>合成モード</label><select id="peMode"><option value="add"'+(p.mode==="add"?" selected":"")+'>追加（銅箔）</option><option value="cut"'+(p.mode==="cut"?" selected":"")+'>切り抜き（スロット）</option></select>'; }
-    html+='<div class="tools"><button id="peDel" class="danger">🗑 この部品を削除</button></div>';
-    box.innerHTML=html;
-    box.querySelectorAll("input[data-f]").forEach(function(inp){ inp.onchange=function(){ var v=parseFloat(inp.value); if(!isNaN(v)){ p[inp.getAttribute("data-f")]=v; renderList(); draw(); } }; });
-    var ms=document.getElementById("peMode"); if(ms) ms.onchange=function(){ p.mode=ms.value; renderList(); draw(); };
-    document.getElementById("peDel").onclick=function(){ parts.splice(sel,1); sel=-1; renderList(); renderEditor(); draw(); };
-  }
-  function addPart(p){ parts.push(p); sel=parts.length-1; renderList(); renderEditor(); draw(); }
-  document.getElementById("addRect").onclick=function(){ addPart({kind:"rect",mode:"add",cx:0,cy:0,w:30,h:20}); };
-  document.getElementById("addCircle").onclick=function(){ addPart({kind:"circle",mode:"add",cx:0,cy:0,r:12}); };
-  document.getElementById("addEllipse").onclick=function(){ addPart({kind:"ellipse",mode:"add",cx:0,cy:0,rx:16,ry:10}); };
-  document.getElementById("addRing").onclick=function(){ addPart({kind:"ring",mode:"add",cx:0,cy:0,r_out:16,r_in:10}); };
-  document.getElementById("addPoly").onclick=function(){ polyMode=true; polyPts=[]; document.getElementById("polyClose").classList.remove("hidden"); document.getElementById("polyCancel").classList.remove("hidden"); draw(); };
-  document.getElementById("polyClose").onclick=function(){ if(polyPts.length>=3){ addPart({kind:"polygon",mode:"add",pts:polyPts}); } polyMode=false; polyPts=[]; document.getElementById("polyClose").classList.add("hidden"); document.getElementById("polyCancel").classList.add("hidden"); draw(); };
-  document.getElementById("polyCancel").onclick=function(){ polyMode=false; polyPts=[]; document.getElementById("polyClose").classList.add("hidden"); document.getElementById("polyCancel").classList.add("hidden"); draw(); };
-  function setFeedTool(on){ feedTool=on; document.getElementById("toolFeed").classList.toggle("on",on); document.getElementById("toolMove").classList.toggle("on",!on); }
-  document.getElementById("toolFeed").onclick=function(){ setFeedTool(true); };
-  document.getElementById("toolMove").onclick=function(){ setFeedTool(false); };
-  document.getElementById("feedX").onchange=function(){ var v=parseFloat(this.value); if(!isNaN(v)){ feed=[v, feed?feed[1]:0]; draw(); } };
-  document.getElementById("feedY").onchange=function(){ var v=parseFloat(this.value); if(!isNaN(v)){ feed=[feed?feed[0]:0, v]; draw(); } };
-  function evMM(e){ var r=cv.getBoundingClientRect(); return toMM((e.clientX-r.left)/r.width*W, (e.clientY-r.top)/r.height*W); }
-  cv.addEventListener("pointerdown",function(e){ var mm=evMM(e);
-    if(polyMode){ polyPts.push([snap(mm[0]),snap(mm[1])]); draw(); return; }
-    if(feedTool){ feed=[snap(mm[0]),snap(mm[1])]; draw(); return; }
-    if(feed && Math.hypot(mm[0]-feed[0],mm[1]-feed[1])<=2.5){ drag={type:"feed"}; cv.setPointerCapture(e.pointerId); return; }
-    for(var i=parts.length-1;i>=0;i--){ if(inside(parts[i],mm[0],mm[1])){ sel=i; var p=parts[i];
-      if(p.kind==="polygon") drag={type:"poly", dx:mm[0], dy:mm[1]};
-      else if(p.kind!=="raster" && typeof p.cx==="number") drag={type:"move", dx:mm[0]-p.cx, dy:mm[1]-p.cy};
-      else drag=null;
-      renderList(); renderEditor(); draw(); if(drag) cv.setPointerCapture(e.pointerId); return; } }
-    sel=-1; renderList(); renderEditor(); draw();
-  });
-  cv.addEventListener("pointermove",function(e){ if(!drag) return; var mm=evMM(e); var p=parts[sel];
-    if(drag.type==="feed"){ feed=[snap(mm[0]),snap(mm[1])]; }
-    else if(drag.type==="move" && p){ p.cx=snap(mm[0]-drag.dx); p.cy=snap(mm[1]-drag.dy); }
-    else if(drag.type==="poly" && p){ var dx=snap(mm[0]-drag.dx), dy=snap(mm[1]-drag.dy); if(dx||dy){ p.pts=p.pts.map(function(pt){ return [pt[0]+dx, pt[1]+dy]; }); drag.dx+=dx; drag.dy+=dy; } }
-    renderList(); draw();
-  });
-  cv.addEventListener("pointerup",function(){ if(drag){ drag=null; renderEditor(); } });
-  function preset(partsArr, f, name){ parts=partsArr; feed=f; sel=parts.length-1; setMode("draw"); renderList(); renderEditor(); draw(); document.getElementById("shapeName").value=name; }
-  document.getElementById("presetInset").onclick=function(){ preset([{kind:"rect",mode:"add",cx:0,cy:0,w:37.3,h:29.0}], [0,-6.5], "お手本① 長方形＋内側給電"); };
-  document.getElementById("presetCenter").onclick=function(){ preset([{kind:"rect",mode:"add",cx:0,cy:0,w:37.3,h:29.0}], [0,0], "お手本② 長方形＋中心給電"); };
-  document.getElementById("presetCircle").onclick=function(){ preset([{kind:"circle",mode:"add",cx:0,cy:0,r:17}], [6,0], "お手本③ 円形＋6mm給電"); };
-  renderList(); renderEditor(); draw();
-
-  // ---------- 型紙 ----------
-  var TPLS={
-    biconical:[ ["cone_len_mm","片側コーン長 (mm)",50,5,300,1], ["half_angle_deg","開き半角 (deg)",30,5,80,1], ["gap_mm","中心ギャップ (mm)",2,0.5,20,0.5] ],
-    logperiodic:[ ["n_elements","素子数",10,4,30,1], ["tau","τ（縮小率）",0.90,0.80,0.98,0.01], ["sigma","σ（間隔率）",0.16,0.05,0.30,0.01], ["f_low_ghz","最低周波数 (GHz)",1.0,0.1,10,0.1] ],
-    helical:[ ["turns","巻数",6,1,20,0.5], ["diameter_mm","コイル直径 (mm)",40,5,200,1], ["pitch_mm","ピッチ (mm)",31,3,200,1], ["wire_mm","線径 (mm)",2,0.5,10,0.5] ],
-    yagi:[ ["n_elements","素子数（反射器+輻射器+導波器）",5,3,20,1], ["freq_ghz","設計周波数 (GHz)",2.45,0.1,10,0.01], ["boom_mm","ブーム長さ目安 (mm)",120,20,600,5] ]
-  };
-  var selT=document.getElementById("tplSel"), boxT=document.getElementById("tplParams");
-  function renderParams(){ boxT.innerHTML=""; TPLS[selT.value].forEach(function(p){ var d=document.createElement("div"); d.innerHTML='<label>'+p[1]+'</label><input type="number" id="tp_'+p[0]+'" value="'+p[2]+'" min="'+p[3]+'" max="'+p[4]+'" step="'+p[5]+'">'; boxT.appendChild(d); }); }
-  selT.onchange=renderParams; renderParams();
-  function readParams(){ var params={}; TPLS[selT.value].forEach(function(p){ params[p[0]]=parseFloat(document.getElementById("tp_"+p[0]).value); }); return params; }
-  function writeParams(tpl,params){ selT.value=tpl; renderParams(); TPLS[tpl].forEach(function(p){ var el=document.getElementById("tp_"+p[0]); if(el && typeof params[p[0]]==="number") el.value=params[p[0]]; }); }
-
-  // ---------- 発行・読込（共通） ----------
-  function predObj(){ return { f_ghz: parseFloat(document.getElementById("predF").value)||null, s11_db: parseFloat(document.getElementById("predS").value)||null }; }
-  function cleanPart(p){ var o={}; Object.keys(p).forEach(function(k){ if(k.charAt(0)!=="_") o[k]=p[k]; }); return o; }
-  document.getElementById("btnIssue").onclick=function(){
-    var drawing;
-    if(mode==="draw"){ drawing={ type:"vector", board:{size_mm:80,substrate:"FR-4 1.6mm",feed_type:"probe 50ohm"}, parts:parts.map(cleanPart), feed_mm: feed }; }
-    else{ drawing={ type:"template", template:selT.value, params:readParams() }; }
-    var obj={ v:2, kind:"design", name:document.getElementById("shapeName").value||"無題", drawing:drawing, pred:predObj() };
-    document.getElementById("codeOut").value=encodeCode(obj);
-  };
-  document.getElementById("btnCopy").onclick=function(){ var t=document.getElementById("codeOut"); t.select(); var done=function(){ document.getElementById("copyMsg").textContent="コピーしました。Muse のチャットに貼って渡してください。あとは AI が図面を見て解析を振り分けます。"; }; if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(t.value).then(done,done); } else { document.execCommand("copy"); done(); } };
-  document.getElementById("btnImport").onclick=function(){
-    var msg=document.getElementById("importMsg");
-    try{ var obj=decodeAny(document.getElementById("codeIn").value);
-      var d, name, pred;
-      if(obj.kind==="design" && obj.drawing){ d=obj.drawing; name=obj.name; pred=obj.pred; }
-      else if(obj.kind==="planar"){ d={ type:"raster", grid_b64:obj.grid_b64, feed_mm:obj.feed_mm }; name=obj.name; pred=obj.pred; }
-      else if(obj.kind==="param"){ d={ type:"template", template:obj.template, params:obj.params }; name=obj.name; pred=obj.pred; }
-      else throw new Error("図面コードの形式が分かりません");
-      if(d.type==="vector"){ parts=(d.parts||[]).map(function(p){ var q={}; Object.keys(p).forEach(function(k){ q[k]=p[k]; }); return q; }); feed=d.feed_mm||null; sel=parts.length-1; setMode("draw"); renderList(); renderEditor(); draw(); }
-      else if(d.type==="raster"){ parts=[{kind:"raster",mode:"add",cell_mm:2,grid_b64:d.grid_b64}]; feed=d.feed_mm||null; sel=0; setMode("draw"); renderList(); renderEditor(); draw(); }
-      else if(d.type==="template"){ writeParams(d.template, d.params||{}); setMode("tpl"); }
-      document.getElementById("shapeName").value=name||"";
-      if(pred){ document.getElementById("predF").value = pred.f_ghz||""; document.getElementById("predS").value = pred.s11_db||""; }
-      msg.textContent=""; document.getElementById("copyMsg").textContent="読み込みました："+(name||"無題");
-    }catch(err){ msg.textContent="⚠ 読み込めませんでした："+err.message; }
-  };
+"use strict";
+var dz=document.getElementById("dropZone"), fi=document.getElementById("fileIn");
+var wrap=document.getElementById("previewWrap"), img=document.getElementById("previewImg"), info=document.getElementById("fileInfo");
+var curFile=null, rot=0;
+dz.onclick=function(){ fi.click();};
+dz.ondragover=function(e){ e.preventDefault(); dz.classList.add("over");};
+dz.ondragleave=function(){ dz.classList.remove("over");};
+dz.ondrop=function(e){ e.preventDefault(); dz.classList.remove("over"); if(e.dataTransfer.files && e.dataTransfer.files[0]) setFile(e.dataTransfer.files[0]);};
+fi.onchange=function(){ if(fi.files && fi.files[0]) setFile(fi.files[0]);};
+function setFile(f){
+if(!/^image\//.test(f.type)){ document.getElementById("upWarn").textContent="⚠ 画像ファイルを選んでください"; return;}
+document.getElementById("upWarn").textContent="";
+curFile=f; rot=0; img.style.transform="";
+img.onload=function(){ info.innerHTML="ファイル: <b>"+f.name+"</b> ／ "+img.naturalWidth+"×"+img.naturalHeight+" px ／ "+Math.max(1,Math.round(f.size/1024))+" KB";};
+img.src=URL.createObjectURL(f);
+wrap.classList.remove("hidden");
+}
+function applyRot(){ img.style.transform="rotate("+rot+"deg)";}
+document.getElementById("rotL").onclick=function(){ rot=(rot+270)%360; applyRot();};
+document.getElementById("rotR").onclick=function(){ rot=(rot+90)%360; applyRot();};
+document.getElementById("btnClear").onclick=function(){ curFile=null; fi.value=""; img.src=""; wrap.classList.add("hidden");};
+function chk(id){ return document.getElementById(id).checked? "済": "未";}
+document.getElementById("btnMemo").onclick=function(){
+var w=document.getElementById("upWarn");
+if(!curFile){ w.textContent="⚠ 先に写真ファイルを選んでください"; return;}
+w.textContent="";
+var lines=[];
+lines.push("");
+lines.push("作品名：" + (document.getElementById("shapeName").value || "（無題）"));
+lines.push("写真ファイル：" + curFile.name + "（" + img.naturalWidth + "×" + img.naturalHeight + " px）");
+var pf=document.getElementById("predF").value, ps=document.getElementById("predS").value;
+lines.push("予想：共振 " + (pf? pf + " GHz": "（未記入）") + " ／ 最小S11 " + (ps? ps + " dB": "（未記入）"));
+var note=document.getElementById("noteIn").value;
+if(note) lines.push("補足：" + note);
+lines.push("チェック：給電点○に〜=" + chk("chkFeed") + " / 寸法=" + chk("chkDim") + " / 真上撮影=" + chk("chkTop") + " / 銅箔の塗り=" + chk("chkCu"));
+lines.push("この写真を解析してください。まず寸法入りの清書図面を返して確認してください。");
+document.getElementById("memoOut").value=lines.join("\n");
+};
+document.getElementById("btnCopy").onclick=function(){
+var t=document.getElementById("memoOut"); if(!t.value) return; t.select();
+var done=function(){ document.getElementById("copyMsg").textContent="コピーしました。Muse のチャットに写真と一緒に貼って送ってください。";};
+if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(t.value).then(done,done);} else { document.execCommand("copy"); done();}
+};
 })();
 </script>
 </body>
